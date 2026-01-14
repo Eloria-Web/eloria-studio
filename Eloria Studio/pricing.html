@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing - Eloria Studio</title>
+  <meta name="description" content="Choose the perfect plan for your social media management needs.">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/pricing.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo">Eloria Studio</a>
+      <a href="/login.html" class="btn btn--ghost">Log in</a>
+      <a href="/signup.html" class="btn btn--primary">Create free account</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="pricing-hero">
+      <h1>Plans that grow with your social</h1>
+      <p>Start free. Upgrade when your team and channels grow. No fine print.</p>
+    </section>
+
+    <section class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Free</h3>
+        <div class="price">€0<span>/month</span></div>
+        <p class="plan-description">For getting started and testing Eloria Studio.</p>
+        <ul class="plan-features">
+          <li>1 user, 1 brand</li>
+          <li>Basic calendar and scheduling</li>
+          <li>Limited SmartLinks</li>
+        </ul>
+        <a href="/signup.html?plan=free" class="btn btn--secondary btn--full">Start free</a>
+      </div>
+
+      <div class="pricing-card pricing-card--highlight">
+        <span class="popular-badge">Most Popular</span>
+        <h3>Creator</h3>
+        <div class="price">$20<span>/month</span></div>
+        <p class="plan-description">For creators and small teams.</p>
+        <ul class="plan-features">
+          <li>1 user</li>
+          <li>3 brands</li>
+          <li>Standard analytics</li>
+          <li>Basic reports</li>
+          <li>Limited AI features</li>
+          <li>Unlimited SmartLinks</li>
+        </ul>
+        <div class="payment-buttons">
+          <button class="btn btn--primary btn--full" onclick="checkoutWithPayPal('creator', 20)">Pay with PayPal</button>
+          <button class="btn btn--secondary btn--full" onclick="checkoutWithStripe('creator', 20)">Pay with Stripe</button>
+        </div>
+        <p class="trial-note">14-day free trial included</p>
+      </div>
+
+      <div class="pricing-card">
+        <h3>Business</h3>
+        <div class="price">$65<span>/month</span></div>
+        <p class="plan-description">For in-house teams and growing brands.</p>
+        <ul class="plan-features">
+          <li>5 users</li>
+          <li>10 brands</li>
+          <li>Advanced reports</li>
+          <li>Roles & permissions</li>
+          <li>Full Inbox features</li>
+          <li>Unlimited SmartLinks</li>
+          <li>Priority support</li>
+        </ul>
+        <div class="payment-buttons">
+          <button class="btn btn--primary btn--full" onclick="checkoutWithPayPal('business', 65)">Pay with PayPal</button>
+          <button class="btn btn--secondary btn--full" onclick="checkoutWithStripe('business', 65)">Pay with Stripe</button>
+        </div>
+        <p class="trial-note">14-day free trial included</p>
+      </div>
+
+      <div class="pricing-card">
+        <h3>Agency</h3>
+        <div class="price">$180<span>/month</span></div>
+        <p class="plan-description">For agencies with many clients.</p>
+        <ul class="plan-features">
+          <li>Unlimited users</li>
+          <li>Unlimited brands</li>
+          <li>Workspaces</li>
+          <li>White-label reports</li>
+          <li>Approval workflows</li>
+          <li>Volume discounts</li>
+          <li>Dedicated support</li>
+        </ul>
+        <div class="payment-buttons">
+          <button class="btn btn--primary btn--full" onclick="checkoutWithPayPal('agency', 180)">Pay with PayPal</button>
+          <button class="btn btn--secondary btn--full" onclick="checkoutWithStripe('agency', 180)">Pay with Stripe</button>
+        </div>
+        <p class="trial-note">14-day free trial included</p>
+      </div>
+    </section>
+
+    <!-- PayPal Button Container (hidden by default) -->
+    <div id="paypal-button-container" style="display: none;"></div>
+  </main>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Stripe SDK -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <!-- PayPal SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=EUR"></script>
+  
+  <script src="js/firebase-init.js"></script>
+  <script src="js/payments.js"></script>
+</body>
+</html>

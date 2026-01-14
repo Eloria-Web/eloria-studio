@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Eloria Studio</title>
+  <meta name="description" content="Manage your social media accounts from your Eloria Studio dashboard.">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-header">
+        <a href="/" class="sidebar-logo">
+          <span class="logo-mark">ES</span>
+          <span class="logo-text">Eloria Studio</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="/dashboard.html" class="nav-item nav-item--active">
+          <span class="nav-icon">📊</span>
+          <span>Overview</span>
+        </a>
+        <a href="/settings.html" class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          <span>Account Settings</span>
+        </a>
+        <a href="/settings.html#billing" class="nav-item">
+          <span class="nav-icon">💳</span>
+          <span>Billing</span>
+        </a>
+        <a href="/contact.html" class="nav-item">
+          <span class="nav-icon">📚</span>
+          <span>Help & Support</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="user-details">
+            <div class="user-name" id="userName">Loading...</div>
+            <div class="user-email" id="userEmail">...</div>
+          </div>
+        </div>
+        <button class="btn btn--ghost btn--small" id="logoutBtn">Log out</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Welcome back, <span id="welcomeName">there</span>!</h1>
+          <p class="dashboard-subtitle">Here's what's happening with your social media</p>
+        </div>
+        <div class="plan-badge" id="planBadge">
+          <span id="planName">Free Plan</span>
+        </div>
+      </header>
+
+      <!-- Payment success message -->
+      <div class="alert alert--success" id="paymentSuccessAlert" style="display: none;">
+        <strong>Payment successful!</strong> Your subscription is now active.
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Your Plan Card -->
+        <div class="dashboard-card">
+          <h2 class="card-title">Your Plan</h2>
+          <div class="plan-info">
+            <div class="plan-name-large" id="planNameLarge">Free</div>
+            <div class="plan-status" id="planStatus">
+              <span class="status-badge status-badge--active">Active</span>
+            </div>
+            <div class="plan-details" id="planDetails">
+              <p>You're on the free plan</p>
+            </div>
+            <div class="trial-info" id="trialInfo" style="display: none;">
+              <p><strong id="trialDays">14</strong> days left in your trial</p>
+              <p class="trial-note">Your subscription will start automatically after the trial</p>
+            </div>
+            <div class="plan-actions">
+              <a href="/pricing.html" class="btn btn--primary" id="upgradeBtn" style="display: none;">
+                Upgrade Plan
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats Card -->
+        <div class="dashboard-card">
+          <h2 class="card-title">Quick Stats</h2>
+          <div class="stats-placeholder">
+            <p>Dashboard features coming soon</p>
+            <p class="stats-note">You'll see your social media analytics here once you connect your accounts.</p>
+          </div>
+        </div>
+
+        <!-- Get Started Card -->
+        <div class="dashboard-card">
+          <h2 class="card-title">Get Started</h2>
+          <ul class="checklist">
+            <li class="checklist-item checklist-item--completed">
+              <span class="check-icon">✅</span>
+              <span>Account created</span>
+            </li>
+            <li class="checklist-item" id="connectAccountItem">
+              <span class="check-icon">⬜</span>
+              <span>Connect first social account</span>
+            </li>
+            <li class="checklist-item" id="schedulePostItem">
+              <span class="check-icon">⬜</span>
+              <span>Schedule first post</span>
+            </li>
+            <li class="checklist-item" id="inviteTeamItem">
+              <span class="check-icon">⬜</span>
+              <span>Invite team member</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script src="js/firebase-init.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

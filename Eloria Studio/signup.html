@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account - Eloria Studio</title>
+  <meta name="description" content="Create your free Eloria Studio account and start managing all your social media in one place.">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+  <header class="auth-header">
+    <div class="auth-header__inner">
+      <a href="/" class="auth-header__logo">
+        <span class="logo-mark">ES</span>
+        <span class="logo-text">Eloria Studio</span>
+      </a>
+      <a href="/login.html" class="auth-header__link">Log in</a>
+    </div>
+  </header>
+
+  <main class="auth-main">
+    <div class="auth-container">
+      <h1 class="auth-title">Create your account</h1>
+      <p class="auth-subtitle">Start managing all your social media in one place</p>
+
+      <form id="signupForm" class="auth-form">
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            class="form-input" 
+            required 
+            autocomplete="email"
+            placeholder="you@example.com"
+          >
+          <span class="form-error" id="emailError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-input" 
+            required 
+            minlength="8"
+            autocomplete="new-password"
+            placeholder="At least 8 characters"
+          >
+          <div class="password-strength" id="passwordStrength">
+            <div class="password-strength__bar">
+              <div class="password-strength__fill" id="strengthFill"></div>
+            </div>
+            <span class="password-strength__text" id="strengthText">Password strength</span>
+          </div>
+          <span class="form-error" id="passwordError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword" class="form-label">Confirm Password</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            class="form-input" 
+            required 
+            autocomplete="new-password"
+            placeholder="Re-enter your password"
+          >
+          <span class="form-error" id="confirmPasswordError"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="agreeTerms" required>
+            <span>I agree to the <a href="/terms.html" target="_blank">Terms of Service</a> and <a href="/privacy.html" target="_blank">Privacy Policy</a></span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full" id="submitBtn">
+          Create Account
+        </button>
+
+        <div class="auth-message" id="authMessage"></div>
+      </form>
+
+      <p class="auth-footer">
+        Already have an account? <a href="/login.html">Log in</a>
+      </p>
+    </div>
+  </main>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script src="js/firebase-init.js"></script>
+  <script src="js/signup.js"></script>
+</body>
+</html>
