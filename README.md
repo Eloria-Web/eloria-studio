@@ -12,6 +12,15 @@ Sistema completo de autenticación y pagos para Eloria Studio, integrado con Fir
 
 ## 🚀 Instalación
 
+### 0. Elegir flujo de trabajo (obligatorio)
+
+Antes de continuar, responde:
+
+**¿Quieres trabajar directamente en `main` o prefieres usar una rama temporal?**
+
+- Si eliges `main`, seguimos con el flujo simple.
+- Si eliges rama temporal, creamos `feature/tu-rama` y trabajamos ahí.
+
 ### 1. Clonar o navegar al proyecto
 
 ```bash

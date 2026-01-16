@@ -25,6 +25,10 @@
           <span class="nav-icon">📊</span>
           <span data-i18n="nav.overview">Resumen</span>
         </a>
+        <a href="/editor.html" class="nav-item">
+          <span class="nav-icon">✍️</span>
+          <span data-i18n="nav.editor">Editor</span>
+        </a>
         <a href="/settings.html" class="nav-item">
           <span class="nav-icon">⚙️</span>
           <span data-i18n="nav.settings">Configuración</span>
@@ -59,6 +63,7 @@
           <p class="dashboard-subtitle" data-i18n="dashboard.subtitle">Esto es lo que pasa con tus redes</p>
         </div>
         <div class="dashboard-header__actions">
+          <a href="/editor.html" class="btn btn--primary btn--small" data-i18n="dashboard.openEditor">Abrir editor</a>
           <select id="langSelect" class="lang-select" aria-label="Idioma">
             <option value="es">ES</option>
             <option value="en">EN</option>
@@ -249,6 +254,10 @@
             <li class="checklist-item" id="connectAccountItem">
               <span class="check-icon">⬜</span>
               <span data-i18n="checklist.connect">Conecta tu primera red social</span>
+            </li>
+            <li class="checklist-item">
+              <span class="check-icon">⬜</span>
+              <a href="/editor.html" data-i18n="checklist.editor">Crea tu primer contenido</a>
             </li>
             <li class="checklist-item" id="schedulePostItem">
               <span class="check-icon">⬜</span>

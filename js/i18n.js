@@ -9,6 +9,7 @@ const I18N_STRINGS = {
     'nav.billing': 'Facturación',
     'nav.logout': 'Cerrar sesión',
     'nav.overview': 'Resumen',
+    'nav.editor': 'Editor',
     'nav.language': 'Idioma',
     'nav.theme': 'Tema',
     'nav.light': 'Claro',
@@ -106,6 +107,7 @@ const I18N_STRINGS = {
 
     'dashboard.welcome': '¡Bienvenido/a de nuevo,',
     'dashboard.subtitle': 'Esto es lo que pasa con tus redes',
+    'dashboard.openEditor': 'Abrir editor',
     'dashboard.planTitle': 'Tu plan',
     'dashboard.brandsTitle': 'Marcas',
     'dashboard.connectionsTitle': 'Conexiones',
@@ -187,6 +189,7 @@ const I18N_STRINGS = {
     'metrics.engagement': 'Engagement',
     'checklist.account': 'Cuenta creada',
     'checklist.connect': 'Conecta tu primera red social',
+    'checklist.editor': 'Crea tu primer contenido',
     'checklist.schedule': 'Programa tu primer post',
     'checklist.invite': 'Invita a un miembro del equipo',
 
@@ -217,6 +220,7 @@ const I18N_STRINGS = {
     'nav.billing': 'Billing',
     'nav.logout': 'Log out',
     'nav.overview': 'Overview',
+    'nav.editor': 'Editor',
     'nav.language': 'Language',
     'nav.theme': 'Theme',
     'nav.light': 'Light',
@@ -314,6 +318,7 @@ const I18N_STRINGS = {
 
     'dashboard.welcome': 'Welcome back,',
     'dashboard.subtitle': "Here's what's happening with your social media",
+    'dashboard.openEditor': 'Open editor',
     'dashboard.planTitle': 'Your Plan',
     'dashboard.brandsTitle': 'Brands',
     'dashboard.connectionsTitle': 'Connections',
@@ -395,6 +400,7 @@ const I18N_STRINGS = {
     'metrics.engagement': 'Engagement',
     'checklist.account': 'Account created',
     'checklist.connect': 'Connect your first social account',
+    'checklist.editor': 'Create your first content',
     'checklist.schedule': 'Schedule your first post',
     'checklist.invite': 'Invite a team member',
 

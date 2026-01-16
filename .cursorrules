@@ -1,0 +1,17 @@
+# CONFIGURACIÓN DEL PROYECTO ELORIA STUDIO
+# Este archivo guía a Cursor en cómo trabajar con este proyecto
+
+## CONTEXTO DEL PROYECTO
+Proyecto: Eloria Studio - Plataforma SaaS de gestión de redes sociales
+Stack: HTML, CSS, JavaScript, Netlify, Firebase, Stripe
+Estructura: Proyecto principal en raíz + /old-versions/ (backups)
+Repositorio: https://github.com/Eloria-Studio/Eloria-Studio
+Usuario Git: Eloria-Studio <admin@eloria.paris>
+
+***
+
+## INSTRUCCIONES PARA CADA SESIÓN DE TRABAJO
+
+### Al finalizar cualquier tarea o cambio importante:
+
+**SIEMPRE genera un resumen estructurado con este formato:**

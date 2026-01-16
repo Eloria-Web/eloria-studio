@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor - Eloria Studio</title>
+  <meta name="description" content="Editor de contenido para Eloria Studio.">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo">Eloria Studio</a>
+    </nav>
+  </header>
+
+  <main class="editor-layout">
+    <section class="editor-main">
+      <h1>Editor de contenido</h1>
+      <p class="helper-text">Crea tu post principal. El estado se guarda en memoria.</p>
+
+      <label class="form-label" for="postText">Texto principal</label>
+      <textarea id="postText" class="form-textarea" rows="6" placeholder="Escribe tu contenido..."></textarea>
+
+      <label class="form-label" for="mediaInput">Adjuntar media (imágenes o video)</label>
+      <input id="mediaInput" class="form-input" type="file" accept="image/*,video/*" multiple>
+
+      <div class="preview-area">
+        <h2 class="preview-title">Vista previa</h2>
+        <p class="preview-text" id="previewText">Sin texto todavía.</p>
+        <div class="preview-media" id="previewMedia"></div>
+      </div>
+
+      <div class="adaptations-area">
+        <h2 class="preview-title">Adaptaciones por red</h2>
+        <p class="helper-text">Personaliza texto y hashtags por red cuando lo necesites.</p>
+        <div id="adaptationsList" class="adaptations-list"></div>
+        <p class="empty-state" id="adaptationsEmpty">Selecciona una red para personalizar el contenido.</p>
+      </div>
+
+      <div class="schedule-area">
+        <h2 class="preview-title">Programación</h2>
+        <div class="schedule-options">
+          <label class="radio-option">
+            <input type="radio" name="publishMode" value="now" checked>
+            Publicar ahora
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="publishMode" value="scheduled">
+            Programar para más tarde
+          </label>
+        </div>
+        <div class="schedule-picker" id="schedulePicker">
+          <label class="form-label" for="scheduleAt">Fecha y hora</label>
+          <input type="datetime-local" id="scheduleAt" class="form-input">
+          <p class="helper-text" id="scheduleTimezone">Se guardará en UTC.</p>
+        </div>
+      </div>
+
+      <div class="confirmation-area">
+        <h2 class="preview-title">Resumen antes de finalizar</h2>
+        <div class="summary-row">
+          <span class="summary-label">Redes</span>
+          <div class="summary-value" id="summaryNetworks">Sin redes seleccionadas.</div>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Formatos</span>
+          <div class="summary-value" id="summaryFormats">—</div>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Programación</span>
+          <div class="summary-value" id="summarySchedule">Publicar ahora</div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn--secondary" id="reviewBtn" type="button">Revisar antes de publicar</button>
+          <button class="btn btn--primary" id="finalizeBtn" type="button">Publicar</button>
+        </div>
+        <div class="validation-summary" id="validationSummary"></div>
+        <div class="form-message" id="validationSuccess"></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn--primary" id="saveDraftBtn" type="button">Guardar borrador</button>
+        <button class="btn btn--secondary" id="clearDraftBtn" type="button">Limpiar borrador</button>
+      </div>
+      <div class="form-message" id="draftMessage"></div>
+
+      <div class="empty-state" id="emptyState">
+        Sin contenido todavía. Escribe el texto para comenzar.
+      </div>
+    </section>
+
+    <aside class="editor-side">
+      <h2>Redes y formatos</h2>
+
+      <div class="panel-section">
+        <p class="panel-title">Redes</p>
+        <label class="network-option" data-network="instagram">
+          <span class="network-name">
+            <input type="checkbox" value="instagram" class="network-input">
+            Instagram
+          </span>
+          <span class="network-status">No conectada</span>
+          <div class="format-group">
+            <label class="format-option">
+              <input type="checkbox" data-network="instagram" data-format="feed" class="format-input">
+              Feed
+            </label>
+            <label class="format-option">
+              <input type="checkbox" data-network="instagram" data-format="stories" class="format-input">
+              Stories
+            </label>
+          </div>
+        </label>
+        <label class="network-option" data-network="facebook">
+          <span class="network-name">
+            <input type="checkbox" value="facebook" class="network-input">
+            Facebook Pages
+          </span>
+          <span class="network-status">No conectada</span>
+          <div class="format-group">
+            <label class="format-option">
+              <input type="checkbox" data-network="facebook" data-format="feed" class="format-input">
+              Feed
+            </label>
+            <label class="format-option">
+              <input type="checkbox" data-network="facebook" data-format="stories" class="format-input">
+              Stories
+            </label>
+          </div>
+        </label>
+        <label class="network-option" data-network="tiktok">
+          <span class="network-name">
+            <input type="checkbox" value="tiktok" class="network-input">
+            TikTok
+          </span>
+          <span class="network-status">No conectada</span>
+          <div class="format-group">
+            <label class="format-option">
+              <input type="checkbox" data-network="tiktok" data-format="feed" class="format-input">
+              Feed
+            </label>
+            <label class="format-option">
+              <input type="checkbox" data-network="tiktok" data-format="stories" class="format-input">
+              Stories
+            </label>
+          </div>
+        </label>
+        <label class="network-option" data-network="youtube">
+          <span class="network-name">
+            <input type="checkbox" value="youtube" class="network-input">
+            YouTube
+          </span>
+          <span class="network-status">No conectada</span>
+          <span class="format-badge">Solo Feed</span>
+          <div class="format-group">
+            <label class="format-option">
+              <input type="checkbox" data-network="youtube" data-format="feed" class="format-input">
+              Feed
+            </label>
+          </div>
+        </label>
+        <label class="network-option" data-network="twitter">
+          <span class="network-name">
+            <input type="checkbox" value="twitter" class="network-input">
+            X (Twitter)
+          </span>
+          <span class="network-status">No conectada</span>
+          <span class="format-badge">Solo Feed</span>
+          <div class="format-group">
+            <label class="format-option">
+              <input type="checkbox" data-network="twitter" data-format="feed" class="format-input">
+              Feed
+            </label>
+          </div>
+        </label>
+        <label class="network-option" data-network="linkedin">
+          <span class="network-name">
+            <input type="checkbox" value="linkedin" class="network-input">
+            LinkedIn Pages
+          </span>
+          <span class="network-status">No conectada</span>
+          <span class="format-badge">Solo Feed</span>
+          <div class="format-group">
+            <label class="format-option">
+              <input type="checkbox" data-network="linkedin" data-format="feed" class="format-input">
+              Feed
+            </label>
+          </div>
+        </label>
+        <p class="warning-text" id="networkWarning">Selecciona una red para continuar.</p>
+      </div>
+
+      <div class="panel-section">
+        <p class="panel-title">Estado</p>
+        <p id="statusValue">draft</p>
+        <p class="helper-text" id="selectionSummary">0 redes · 0 formatos</p>
+        <p class="helper-text" id="mediaCount">0 adjuntos</p>
+      </div>
+    </aside>
+  </main>
+
+  <script src="js/editor.js"></script>
+</body>
+</html>
