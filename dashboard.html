@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Eloria Studio</title>
+  <meta name="description" content="Gestiona tus redes sociales desde el dashboard de Eloria Studio.">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-header">
+        <a href="/" class="sidebar-logo">
+          <span class="logo-mark">ES</span>
+          <span class="logo-text">Eloria Studio</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="/dashboard.html" class="nav-item nav-item--active">
+          <span class="nav-icon">📊</span>
+          <span data-i18n="nav.overview">Resumen</span>
+        </a>
+        <a href="/settings.html" class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          <span data-i18n="nav.settings">Configuración</span>
+        </a>
+        <a href="/settings.html#billing" class="nav-item">
+          <span class="nav-icon">💳</span>
+          <span data-i18n="nav.billing">Facturación</span>
+        </a>
+        <a href="/contact.html" class="nav-item">
+          <span class="nav-icon">📚</span>
+          <span data-i18n="nav.support">Ayuda</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="user-details">
+            <div class="user-name" id="userName">Loading...</div>
+            <div class="user-email" id="userEmail">...</div>
+          </div>
+        </div>
+        <button class="btn btn--ghost btn--small" id="logoutBtn" data-i18n="nav.logout">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title"><span data-i18n="dashboard.welcome">¡Bienvenido/a de nuevo,</span> <span id="welcomeName">allí</span>!</h1>
+          <p class="dashboard-subtitle" data-i18n="dashboard.subtitle">Esto es lo que pasa con tus redes</p>
+        </div>
+        <div class="dashboard-header__actions">
+          <select id="langSelect" class="lang-select" aria-label="Idioma">
+            <option value="es">ES</option>
+            <option value="en">EN</option>
+          </select>
+          <button id="themeToggle" class="theme-toggle" type="button">Claro</button>
+          <div class="plan-badge" id="planBadge">
+            <span id="planName" data-i18n="plan.suffix">Plan</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Payment success message -->
+      <div class="alert alert--success" id="paymentSuccessAlert" style="display: none;">
+        <strong data-i18n="dashboard.paymentSuccessTitle">¡Pago exitoso!</strong>
+        <span data-i18n="dashboard.paymentSuccessSubtitle">Tu suscripción está activa.</span>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Your Plan Card -->
+        <div class="dashboard-card">
+          <h2 class="card-title" data-i18n="dashboard.planTitle">Tu plan</h2>
+          <div class="plan-info">
+            <div class="plan-name-large" id="planNameLarge">Free</div>
+            <div class="plan-status" id="planStatus">
+              <span class="status-badge status-badge--active" data-i18n="status.active">Activo</span>
+            </div>
+            <div class="plan-details" id="planDetails">
+              <p data-i18n="plan.freeDetail">Estás en el plan gratis</p>
+            </div>
+            <div class="trial-info" id="trialInfo" style="display: none;">
+              <p><strong id="trialDays">14</strong> <span data-i18n="dashboard.trialDays">días restantes de prueba</span></p>
+              <p class="trial-note" data-i18n="dashboard.trialNote">La suscripción comenzará automáticamente al finalizar la prueba</p>
+            </div>
+            <div class="plan-actions">
+              <a href="/pricing.html" class="btn btn--primary" id="upgradeBtn" style="display: none;">
+                <span data-i18n="dashboard.upgradePlan">Actualizar plan</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Brands Card -->
+        <div class="dashboard-card">
+          <h2 class="card-title" data-i18n="dashboard.brandsTitle">Marcas</h2>
+          <div class="card-section">
+            <label class="form-label" for="brandSelect" data-i18n="dashboard.activeBrand">Marca activa</label>
+            <select id="brandSelect" class="form-select"></select>
+            <p class="helper-text" data-i18n="dashboard.helper.brands">Las marcas son workspaces. Los límites se aplican en servidor.</p>
+          </div>
+          <div class="card-section">
+            <form id="brandForm" class="inline-form">
+              <input type="text" id="brandName" class="form-input" placeholder="Nombre de nueva marca" data-i18n-placeholder="dashboard.newBrand" required>
+              <button type="submit" class="btn btn--primary" data-i18n="dashboard.create">Crear</button>
+            </form>
+            <div id="brandMessage" class="form-message"></div>
+            <ul id="brandList" class="simple-list"></ul>
+          </div>
+        </div>
+
+        <!-- Connections Card -->
+        <div class="dashboard-card">
+          <h2 class="card-title" data-i18n="dashboard.connectionsTitle">Conexiones</h2>
+          <p class="helper-text" data-i18n="dashboard.helper.connections">Conecta solo las 6 redes del MVP. Las diferidas muestran "Próximamente".</p>
+          <div id="connectionsList" class="connections-list"></div>
+        </div>
+
+        <!-- Composer Card -->
+        <div class="dashboard-card dashboard-card--wide">
+          <h2 class="card-title" data-i18n="dashboard.composeTitle">Componer</h2>
+          <form id="composerForm" class="composer-form">
+            <div class="form-row">
+              <label class="form-label" for="postText" data-i18n="dashboard.masterPost">Post maestro</label>
+              <textarea id="postText" class="form-textarea" rows="4" placeholder="Escribe tu mensaje principal..." data-i18n-placeholder="dashboard.masterPost"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="linkUrl" data-i18n="dashboard.link">Enlace (opcional)</label>
+              <input type="url" id="linkUrl" class="form-input" placeholder="https://">
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="imageUrls" data-i18n="dashboard.images">URLs de imagen (separadas por coma)</label>
+              <input type="text" id="imageUrls" class="form-input" placeholder="https://imagen1, https://imagen2" data-i18n-placeholder="dashboard.images">
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="videoUrl" data-i18n="dashboard.video">URL de video (requerido para TikTok/YouTube)</label>
+              <input type="url" id="videoUrl" class="form-input" placeholder="https://video">
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="hashtags" data-i18n="dashboard.hashtags">Hashtags (opcional, separados por coma)</label>
+              <input type="text" id="hashtags" class="form-input" placeholder="#marca, #lanzamiento" data-i18n-placeholder="dashboard.hashtags">
+              <p class="helper-text" data-i18n="dashboard.helper.hashtags">
+                Instagram: 5–8 hashtags recomendados · TikTok: 3–5 · LinkedIn: mínimos · X: texto corto + link
+              </p>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" data-i18n="dashboard.selectNetworks">Seleccionar redes</label>
+              <div id="networkOptions" class="network-options"></div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" data-i18n="dashboard.selectFormats">Seleccionar formatos</label>
+              <div id="formatOptions" class="format-options">
+                <p class="helper-text" data-i18n="dashboard.helper.formats">Elige Feed/Stories/Shorts/Largo por red seleccionada.</p>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="scheduledAt" data-i18n="dashboard.schedule">Programar (UTC)</label>
+              <input type="datetime-local" id="scheduledAt" class="form-input">
+              <p class="helper-text" data-i18n="dashboard.helper.timezone">Las fechas se guardan en UTC y se muestran en tu horario local.</p>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary" id="saveDraftBtn" data-i18n="dashboard.saveDraft">Guardar borrador</button>
+              <button type="button" class="btn btn--secondary" id="scheduleBtn" data-i18n="dashboard.scheduleBtn">Programar</button>
+            </div>
+            <div id="composerMessage" class="form-message"></div>
+          </form>
+        </div>
+
+        <!-- Adaptations Card -->
+        <div class="dashboard-card">
+          <h2 class="card-title" data-i18n="dashboard.adaptationsTitle">Adaptaciones</h2>
+          <div class="table-wrapper">
+            <table class="simple-table">
+              <thead>
+                <tr>
+                  <th data-i18n="table.network">Red</th>
+                  <th data-i18n="table.format">Formato</th>
+                  <th data-i18n="table.status">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="adaptationsTable">
+                <tr>
+                  <td colspan="3" class="empty-state" data-i18n="dashboard.msg.adaptationsEmpty">Selecciona redes y formatos para ver adaptaciones.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="validationErrors" class="validation-errors"></div>
+        </div>
+
+        <!-- Publishing Status Card -->
+        <div class="dashboard-card">
+          <h2 class="card-title" data-i18n="dashboard.statusTitle">Estado de publicación</h2>
+          <ul id="publishingStatus" class="status-list">
+            <li class="status-item" data-i18n="status.draftNotScheduled">Borrador · No programado</li>
+          </ul>
+          <p class="helper-text" data-i18n="dashboard.helper.statuses">Estados: Borrador, Programado, Publicando, Publicado, Parcial, Fallido.</p>
+        </div>
+
+        <!-- Metrics Card -->
+        <div class="dashboard-card">
+          <h2 class="card-title" data-i18n="dashboard.metricsTitle">Métricas</h2>
+          <div class="metrics-grid" id="metricsGrid">
+            <div class="metric-item" data-metric-key="followers">
+              <span class="metric-label" data-i18n="metrics.followers">Seguidores</span>
+              <span class="metric-value">—</span>
+            </div>
+            <div class="metric-item" data-metric-key="likes">
+              <span class="metric-label" data-i18n="metrics.likes">Me gusta</span>
+              <span class="metric-value">—</span>
+            </div>
+            <div class="metric-item" data-metric-key="comments">
+              <span class="metric-label" data-i18n="metrics.comments">Comentarios</span>
+              <span class="metric-value">—</span>
+            </div>
+            <div class="metric-item" data-metric-key="views">
+              <span class="metric-label" data-i18n="metrics.views">Vistas</span>
+              <span class="metric-value">—</span>
+            </div>
+            <div class="metric-item" data-metric-key="engagement">
+              <span class="metric-label" data-i18n="metrics.engagement">Engagement</span>
+              <span class="metric-value">—</span>
+            </div>
+          </div>
+          <p class="helper-text" id="metricsUpdated" data-i18n="dashboard.lastUpdated">Última actualización</p>
+        </div>
+
+        <!-- Get Started Card -->
+        <div class="dashboard-card">
+          <h2 class="card-title" data-i18n="dashboard.getStarted">Comenzar</h2>
+          <ul class="checklist">
+            <li class="checklist-item checklist-item--completed">
+              <span class="check-icon">✅</span>
+              <span data-i18n="checklist.account">Cuenta creada</span>
+            </li>
+            <li class="checklist-item" id="connectAccountItem">
+              <span class="check-icon">⬜</span>
+              <span data-i18n="checklist.connect">Conecta tu primera red social</span>
+            </li>
+            <li class="checklist-item" id="schedulePostItem">
+              <span class="check-icon">⬜</span>
+              <span data-i18n="checklist.schedule">Programa tu primer post</span>
+            </li>
+            <li class="checklist-item" id="inviteTeamItem">
+              <span class="check-icon">⬜</span>
+              <span data-i18n="checklist.invite">Invita a un miembro del equipo</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script src="js/firebase-init.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>

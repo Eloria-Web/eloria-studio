@@ -1,0 +1,24 @@
+{
+  "name": "eloria-studio",
+  "version": "1.0.0",
+  "description": "Social media management platform - Eloria Studio",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build step required for static site'",
+    "deploy": "netlify deploy --prod"
+  },
+  "dependencies": {
+    "stripe": "^14.10.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.10.1"
+  },
+  "keywords": [
+    "social-media",
+    "saas",
+    "stripe",
+    "firebase"
+  ],
+  "author": "Eloria Studio",
+  "license": "MIT"
+}

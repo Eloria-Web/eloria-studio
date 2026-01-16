@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eloria Studio - Gestión social todo en uno</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo">Eloria Studio</a>
+      <div class="nav-actions">
+        <select id="langSelect" class="lang-select" aria-label="Idioma">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+        </select>
+        <button id="themeToggle" class="theme-toggle" type="button">Claro</button>
+        <a href="/signup.html" class="btn btn--primary" data-i18n="nav.createAccount">Crear cuenta gratis</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1 data-i18n="home.heroTitle">Todas tus redes, en una sola pestaña</h1>
+      <p data-i18n="home.heroSubtitle">Planifica, mide y colabora sin fricción.</p>
+      <div class="cta-buttons">
+        <a href="/signup.html" class="btn btn--primary" data-i18n="home.heroCtaPrimary">Crea tu cuenta gratis</a>
+        <a href="#demo" class="btn btn--ghost" data-i18n="home.heroCtaSecondary">Ver cómo funciona</a>
+      </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+      <h2 data-i18n="home.pricingTitle">Planes que crecen con tu social</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3 data-i18n="pricing.freeTitle">Gratis</h3>
+          <div class="price">$0<span>/month</span></div>
+          <ul>
+            <li data-i18n="features.free.users">1 usuario, 1 marca</li>
+            <li data-i18n="features.free.calendar">Calendario básico</li>
+            <li data-i18n="features.free.links">Links limitados</li>
+          </ul>
+          <a href="/signup.html?plan=free" class="btn btn--secondary" data-i18n="pricing.startFree">Empezar gratis</a>
+        </div>
+
+        <div class="pricing-card pricing-card--highlight">
+          <h3 data-i18n="pricing.creatorTitle">Creator</h3>
+          <div class="price">$20<span>/month</span></div>
+          <ul>
+            <li data-i18n="features.creator.users">1 usuario, 3 marcas</li>
+            <li data-i18n="features.creator.analytics">Analíticas estándar</li>
+            <li data-i18n="features.creator.reports">Reportes básicos</li>
+            <li data-i18n="features.creator.ai">IA limitada</li>
+            <li data-i18n="features.creator.links">SmartLinks ilimitados</li>
+          </ul>
+          <a href="/checkout.html?plan=creator" class="btn btn--primary" data-i18n="pricing.startFree">Empezar gratis</a>
+        </div>
+
+        <div class="pricing-card">
+          <h3 data-i18n="pricing.businessTitle">Business</h3>
+          <div class="price">$65<span>/month</span></div>
+          <ul>
+            <li data-i18n="features.business.users">5 usuarios, 10 marcas</li>
+            <li data-i18n="features.business.reports">Reportes avanzados</li>
+            <li data-i18n="features.business.roles">Roles y permisos</li>
+            <li data-i18n="features.business.inbox">Inbox completo</li>
+            <li data-i18n="features.business.support">Soporte prioritario</li>
+          </ul>
+          <a href="/checkout.html?plan=business" class="btn btn--secondary" data-i18n="pricing.startFree">Empezar gratis</a>
+        </div>
+
+        <div class="pricing-card">
+          <h3 data-i18n="pricing.agencyTitle">Agency</h3>
+          <div class="price">$180<span>/month</span></div>
+          <ul>
+            <li data-i18n="features.agency.users">Usuarios ilimitados</li>
+            <li data-i18n="features.agency.brands">Marcas ilimitadas</li>
+            <li data-i18n="features.agency.reports">Reportes white-label</li>
+            <li data-i18n="features.agency.approvals">Flujos de aprobación</li>
+            <li data-i18n="features.agency.support">Soporte dedicado</li>
+          </ul>
+          <a href="/checkout.html?plan=agency" class="btn btn--secondary" data-i18n="pricing.startFree">Empezar gratis</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>

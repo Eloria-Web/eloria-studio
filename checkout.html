@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalizar compra - Eloria Studio</title>
+  <meta name="description" content="Completa tu suscripción a Eloria Studio.">
+  
+  <!-- Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/checkout.css">
+</head>
+<body>
+  <header class="checkout-header">
+    <div class="checkout-header__inner">
+      <a href="/" class="checkout-header__logo">
+        <span class="logo-mark">ES</span>
+        <span class="logo-text">Eloria Studio</span>
+      </a>
+      <div class="nav-actions">
+        <select id="langSelect" class="lang-select" aria-label="Idioma">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+        </select>
+        <button id="themeToggle" class="theme-toggle" type="button">Claro</button>
+        <span class="checkout-header__secure" data-i18n="checkout.secure">🔒 Pago seguro</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="checkout-main">
+    <div class="checkout-container">
+      <div class="checkout-grid">
+        <!-- Order Summary -->
+        <div class="checkout-summary">
+          <h2 class="checkout-title" data-i18n="checkout.orderSummary">Resumen del pedido</h2>
+          
+          <div class="summary-plan" id="summaryPlan">
+            <div class="summary-plan__name">Creator Plan</div>
+            <div class="summary-plan__price" id="summaryPrice">$20/month</div>
+          </div>
+
+          <div class="summary-features" id="summaryFeatures">
+            <h3 data-i18n="checkout.includes">Incluye:</h3>
+            <ul>
+              <li data-i18n="checkout.features.brands">Hasta 3 marcas</li>
+              <li data-i18n="checkout.features.analytics">Analíticas estándar y reportes básicos</li>
+              <li data-i18n="checkout.features.ai">Asistencia de IA limitada</li>
+            </ul>
+          </div>
+
+          <div class="summary-total">
+            <div class="summary-total__row">
+              <span data-i18n="checkout.subtotal">Subtotal</span>
+              <span id="subtotal">$20/month</span>
+            </div>
+            <div class="summary-total__row summary-total__row--highlight">
+              <span data-i18n="checkout.total">Total</span>
+              <span id="total">$20/month</span>
+            </div>
+            <div class="summary-trial">
+              <strong data-i18n="checkout.trialTitle">Incluye 14 días de prueba</strong>
+              <p data-i18n="checkout.trialSubtitle">No se te cobrará hasta que termine la prueba</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checkout Form -->
+        <div class="checkout-form">
+          <h2 class="checkout-title" data-i18n="checkout.title">Finalizar compra</h2>
+
+          <div id="paymentSection">
+            <h3 class="checkout-subtitle" data-i18n="checkout.paymentTitle">Método de pago</h3>
+            
+            <p class="checkout-note">
+              <span data-i18n="checkout.loginNote">Debes iniciar sesión para continuar.</span>
+              <a href="/login.html" data-i18n="nav.login">Iniciar sesión</a>
+              <span data-i18n="checkout.or">o</span>
+              <a href="/signup.html" data-i18n="nav.signup">crear cuenta</a>.
+            </p>
+
+            <button type="button" id="checkoutBtn" class="btn btn--primary btn--full" disabled data-i18n="checkout.cta">
+              Comenzar prueba gratis
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script src="js/firebase-init.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>

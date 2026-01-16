@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Precios - Eloria Studio</title>
+  <meta name="description" content="Elige el plan ideal para gestionar tus redes sociales.">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/pricing.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo">Eloria Studio</a>
+      <div class="nav-actions">
+        <select id="langSelect" class="lang-select" aria-label="Idioma">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+        </select>
+        <button id="themeToggle" class="theme-toggle" type="button">Claro</button>
+        <a href="/login.html" class="btn btn--ghost" data-i18n="nav.login">Iniciar sesión</a>
+        <a href="/signup.html" class="btn btn--primary" data-i18n="nav.createAccount">Crear cuenta gratis</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="pricing-hero">
+      <h1 data-i18n="pricing.title">Planes que crecen con tu social</h1>
+      <p data-i18n="pricing.subtitle">Empieza gratis. Sube cuando tu equipo y canales crezcan.</p>
+    </section>
+
+    <section class="pricing-grid">
+      <div class="pricing-card">
+        <h3 data-i18n="pricing.freeTitle">Gratis</h3>
+        <div class="price">$0<span>/month</span></div>
+        <p class="plan-description" data-i18n="pricing.freeDesc">Para comenzar y probar Eloria Studio.</p>
+        <ul class="plan-features">
+          <li data-i18n="features.free.users">1 usuario, 1 marca</li>
+          <li data-i18n="features.free.calendar">Calendario básico y programación</li>
+          <li data-i18n="features.free.links">SmartLinks limitados</li>
+        </ul>
+        <a href="/signup.html?plan=free" class="btn btn--secondary btn--full" data-i18n="pricing.startFree">Empezar gratis</a>
+      </div>
+
+      <div class="pricing-card pricing-card--highlight">
+        <span class="popular-badge" data-i18n="pricing.popular">Más popular</span>
+        <h3 data-i18n="pricing.creatorTitle">Creator</h3>
+        <div class="price">$20<span>/month</span></div>
+        <p class="plan-description" data-i18n="pricing.creatorDesc">Para creadores y equipos pequeños.</p>
+        <ul class="plan-features">
+          <li data-i18n="features.creator.users">1 usuario</li>
+          <li data-i18n="features.creator.brands">3 marcas</li>
+          <li data-i18n="features.creator.analytics">Analíticas estándar</li>
+          <li data-i18n="features.creator.reports">Reportes básicos</li>
+          <li data-i18n="features.creator.ai">IA limitada</li>
+          <li data-i18n="features.creator.links">SmartLinks ilimitados</li>
+        </ul>
+        <div class="payment-buttons">
+          <button class="btn btn--primary btn--full" onclick="checkoutWithPayPal('creator', 20)" data-i18n="pricing.payPal">Pagar con PayPal</button>
+          <button class="btn btn--secondary btn--full" onclick="checkoutWithStripe('creator', 20)" data-i18n="pricing.stripe">Pagar con Stripe</button>
+        </div>
+        <p class="trial-note" data-i18n="pricing.trialNote">Incluye 14 días de prueba</p>
+      </div>
+
+      <div class="pricing-card">
+        <h3 data-i18n="pricing.businessTitle">Business</h3>
+        <div class="price">$65<span>/month</span></div>
+        <p class="plan-description" data-i18n="pricing.businessDesc">Para equipos internos y marcas en crecimiento.</p>
+        <ul class="plan-features">
+          <li data-i18n="features.business.users">5 usuarios</li>
+          <li data-i18n="features.business.brands">10 marcas</li>
+          <li data-i18n="features.business.reports">Reportes avanzados</li>
+          <li data-i18n="features.business.roles">Roles y permisos</li>
+          <li data-i18n="features.business.inbox">Inbox completo</li>
+          <li data-i18n="features.business.links">SmartLinks ilimitados</li>
+          <li data-i18n="features.business.support">Soporte prioritario</li>
+        </ul>
+        <div class="payment-buttons">
+          <button class="btn btn--primary btn--full" onclick="checkoutWithPayPal('business', 65)" data-i18n="pricing.payPal">Pagar con PayPal</button>
+          <button class="btn btn--secondary btn--full" onclick="checkoutWithStripe('business', 65)" data-i18n="pricing.stripe">Pagar con Stripe</button>
+        </div>
+        <p class="trial-note" data-i18n="pricing.trialNote">Incluye 14 días de prueba</p>
+      </div>
+
+      <div class="pricing-card">
+        <h3 data-i18n="pricing.agencyTitle">Agency</h3>
+        <div class="price">$180<span>/month</span></div>
+        <p class="plan-description" data-i18n="pricing.agencyDesc">Para agencias con muchos clientes.</p>
+        <ul class="plan-features">
+          <li data-i18n="features.agency.users">Usuarios ilimitados</li>
+          <li data-i18n="features.agency.brands">Marcas ilimitadas</li>
+          <li data-i18n="features.agency.workspaces">Workspaces</li>
+          <li data-i18n="features.agency.reports">Reportes white-label</li>
+          <li data-i18n="features.agency.approvals">Flujos de aprobación</li>
+          <li data-i18n="features.agency.discounts">Descuentos por volumen</li>
+          <li data-i18n="features.agency.support">Soporte dedicado</li>
+        </ul>
+        <div class="payment-buttons">
+          <button class="btn btn--primary btn--full" onclick="checkoutWithPayPal('agency', 180)" data-i18n="pricing.payPal">Pagar con PayPal</button>
+          <button class="btn btn--secondary btn--full" onclick="checkoutWithStripe('agency', 180)" data-i18n="pricing.stripe">Pagar con Stripe</button>
+        </div>
+        <p class="trial-note" data-i18n="pricing.trialNote">Incluye 14 días de prueba</p>
+      </div>
+    </section>
+
+    <!-- PayPal Button Container (hidden by default) -->
+    <div id="paypal-button-container" style="display: none;"></div>
+  </main>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Stripe SDK -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <!-- PayPal SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+  
+  <script src="js/firebase-init.js"></script>
+  <script src="js/payments.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>

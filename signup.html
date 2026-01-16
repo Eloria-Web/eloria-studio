@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear cuenta - Eloria Studio</title>
+  <meta name="description" content="Crea tu cuenta gratis de Eloria Studio y gestiona todas tus redes sociales en un solo lugar.">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+  <header class="auth-header">
+    <div class="auth-header__inner">
+      <a href="/" class="auth-header__logo">
+        <span class="logo-mark">ES</span>
+        <span class="logo-text">Eloria Studio</span>
+      </a>
+      <div class="nav-actions">
+        <select id="langSelect" class="lang-select" aria-label="Idioma">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+        </select>
+        <button id="themeToggle" class="theme-toggle" type="button">Claro</button>
+        <a href="/login.html" class="auth-header__link" data-i18n="nav.login">Iniciar sesión</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="auth-main">
+    <div class="auth-container">
+      <h1 class="auth-title" data-i18n="auth.signupTitle">Crea tu cuenta</h1>
+      <p class="auth-subtitle" data-i18n="auth.signupSubtitle">Gestiona todas tus redes en un solo lugar</p>
+
+      <form id="signupForm" class="auth-form">
+        <div class="form-group">
+          <label for="email" class="form-label" data-i18n="auth.email">Correo</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            class="form-input" 
+            required 
+            autocomplete="email"
+            placeholder="tu@ejemplo.com"
+            data-i18n-placeholder="auth.emailPlaceholder"
+          >
+          <span class="form-error" id="emailError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label" data-i18n="auth.password">Contraseña</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-input" 
+            required 
+            minlength="8"
+            autocomplete="new-password"
+            placeholder="Al menos 8 caracteres"
+            data-i18n-placeholder="auth.passwordMinPlaceholder"
+          >
+          <div class="password-strength" id="passwordStrength">
+            <div class="password-strength__bar">
+              <div class="password-strength__fill" id="strengthFill"></div>
+            </div>
+            <span class="password-strength__text" id="strengthText" data-i18n="auth.passwordStrength">Fortaleza de la contraseña</span>
+          </div>
+          <span class="form-error" id="passwordError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword" class="form-label" data-i18n="auth.confirmPassword">Confirmar contraseña</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            class="form-input" 
+            required 
+            autocomplete="new-password"
+            placeholder="Repite tu contraseña"
+            data-i18n-placeholder="auth.confirmPlaceholder"
+          >
+          <span class="form-error" id="confirmPasswordError"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="agreeTerms" required>
+            <span data-i18n="auth.termsPrefix">Acepto los</span>
+            <a href="/terms.html" target="_blank" data-i18n="auth.termsLink">Términos de Servicio</a>
+            <span data-i18n="auth.termsAnd">y</span>
+            <a href="/privacy.html" target="_blank" data-i18n="auth.privacyLink">Política de Privacidad</a>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full" id="submitBtn" data-i18n="auth.signupBtn">
+          Crear cuenta
+        </button>
+
+        <div class="auth-message" id="authMessage"></div>
+      </form>
+
+      <p class="auth-footer">
+        <span data-i18n="auth.haveAccount">¿Ya tienes cuenta?</span> <a href="/login.html" data-i18n="nav.login">Iniciar sesión</a>
+      </p>
+    </div>
+  </main>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script src="js/firebase-init.js"></script>
+  <script src="js/signup.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>
