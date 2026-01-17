@@ -95,6 +95,38 @@
       <h2>Redes y formatos</h2>
 
       <div class="panel-section">
+        <p class="panel-title">Marca activa</p>
+        <select id="brandSelect" class="form-select"></select>
+        <p class="helper-text" id="activeBrandLabel">Sin marca seleccionada.</p>
+        <input type="hidden" id="brandIdInput">
+        <div class="form-row">
+          <input type="text" id="brandNameInput" class="form-input" placeholder="Nombre de la nueva marca">
+          <button type="button" class="btn btn--secondary btn--small" id="createBrandBtn">Crear marca</button>
+        </div>
+        <p class="helper-text" id="brandLimitNote"></p>
+        <p class="helper-text" id="planUsageNote"></p>
+        <div class="form-message" id="oauthMessage"></div>
+      </div>
+
+      <div class="panel-section">
+        <p class="panel-title">Cuentas Meta</p>
+        <button type="button" class="btn btn--secondary btn--small" id="loadMetaBtn">Cargar cuentas</button>
+        <div class="meta-selects">
+          <label class="form-label" for="facebookAccountSelect">Facebook Pages</label>
+          <select id="facebookAccountSelect" class="form-select">
+            <option value="">Selecciona una página</option>
+          </select>
+          <button type="button" class="btn btn--secondary btn--small" id="activateFacebookBtn">Activar Facebook</button>
+
+          <label class="form-label" for="instagramAccountSelect">Instagram Business</label>
+          <select id="instagramAccountSelect" class="form-select">
+            <option value="">Selecciona una cuenta</option>
+          </select>
+          <button type="button" class="btn btn--secondary btn--small" id="activateInstagramBtn">Activar Instagram</button>
+        </div>
+      </div>
+
+      <div class="panel-section">
         <p class="panel-title">Redes</p>
         <label class="network-option" data-network="instagram">
           <span class="network-name">
@@ -102,6 +134,7 @@
             Instagram
           </span>
           <span class="network-status">No conectada</span>
+          <button type="button" class="btn btn--secondary btn--small connect-btn" data-network="instagram">Conectar</button>
           <div class="format-group">
             <label class="format-option">
               <input type="checkbox" data-network="instagram" data-format="feed" class="format-input">
@@ -119,6 +152,7 @@
             Facebook Pages
           </span>
           <span class="network-status">No conectada</span>
+          <button type="button" class="btn btn--secondary btn--small connect-btn" data-network="facebook">Conectar</button>
           <div class="format-group">
             <label class="format-option">
               <input type="checkbox" data-network="facebook" data-format="feed" class="format-input">
@@ -136,6 +170,7 @@
             TikTok
           </span>
           <span class="network-status">No conectada</span>
+          <button type="button" class="btn btn--secondary btn--small connect-btn" data-network="tiktok">Conectar</button>
           <div class="format-group">
             <label class="format-option">
               <input type="checkbox" data-network="tiktok" data-format="feed" class="format-input">
@@ -153,6 +188,7 @@
             YouTube
           </span>
           <span class="network-status">No conectada</span>
+          <button type="button" class="btn btn--secondary btn--small connect-btn" data-network="youtube">Conectar</button>
           <span class="format-badge">Solo Feed</span>
           <div class="format-group">
             <label class="format-option">
@@ -167,6 +203,7 @@
             X (Twitter)
           </span>
           <span class="network-status">No conectada</span>
+          <button type="button" class="btn btn--secondary btn--small connect-btn" data-network="twitter">Conectar</button>
           <span class="format-badge">Solo Feed</span>
           <div class="format-group">
             <label class="format-option">
@@ -181,6 +218,7 @@
             LinkedIn Pages
           </span>
           <span class="network-status">No conectada</span>
+          <button type="button" class="btn btn--secondary btn--small connect-btn" data-network="linkedin">Conectar</button>
           <span class="format-badge">Solo Feed</span>
           <div class="format-group">
             <label class="format-option">
@@ -197,6 +235,14 @@
         <p id="statusValue">draft</p>
         <p class="helper-text" id="selectionSummary">0 redes · 0 formatos</p>
         <p class="helper-text" id="mediaCount">0 adjuntos</p>
+        <p class="helper-text">Publicación</p>
+        <p id="globalPublishStatus" class="status-badge is-pending">Pendiente</p>
+        <div class="status-list" id="networkPublishList"></div>
+      </div>
+
+      <div class="panel-section">
+        <p class="panel-title">Métricas</p>
+        <div class="metrics-list" id="metricsList"></div>
       </div>
     </aside>
   </main>

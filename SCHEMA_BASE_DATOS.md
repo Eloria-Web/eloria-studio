@@ -8,6 +8,7 @@ CREATE TABLE brands (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
   name text NOT NULL,
+  is_over_limit boolean DEFAULT false,
   created_at timestamp DEFAULT now(),
   updated_at timestamp DEFAULT now()
 );
@@ -17,6 +18,18 @@ ALTER TABLE brands ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can manage own brands"
   ON brands FOR ALL
   USING (auth.uid() = user_id);
+```
+
+### 1.1 user_plans (Plan activo por usuario)
+```sql
+CREATE TABLE user_plans (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  plan text NOT NULL CHECK (plan IN ('free', 'creator', 'business', 'professional')),
+  started_at timestamp DEFAULT now()
+);
+
+ALTER TABLE user_plans ENABLE ROW LEVEL SECURITY;
 ```
 
 ### 2. brand_members (Roles por marca)
@@ -42,6 +55,7 @@ CREATE POLICY "Users can view own brand memberships"
 CREATE TABLE network_connections (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   brand_id uuid REFERENCES brands(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
   network text NOT NULL CHECK (network IN (
     'instagram', 'facebook', 'tiktok', 'youtube', 
     'twitter', 'linkedin'
@@ -52,6 +66,8 @@ CREATE TABLE network_connections (
   access_token text NOT NULL,
   refresh_token text,
   token_expires_at timestamp,
+  scopes text[],
+  meta_user_id text,
   is_active boolean DEFAULT true,
   created_at timestamp DEFAULT now(),
   updated_at timestamp DEFAULT now(),
@@ -386,6 +402,42 @@ CREATE TABLE oauth_states (
 ALTER TABLE oauth_states ENABLE ROW LEVEL SECURITY;
 ```
 
+### 13. post_payloads (Payload congelado del editor)
+```sql
+CREATE TABLE post_payloads (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  status text NOT NULL CHECK (status IN ('draft', 'scheduled', 'ready_to_publish', 'failed', 'published')),
+  scheduled_at_utc timestamp,
+  ready_at_utc timestamp,
+  n8n_triggered_at timestamp,
+  error_reason text,
+  brand_id uuid,
+  user_id uuid,
+  payload_final jsonb NOT NULL,
+  publish_results jsonb,
+  published_at timestamp,
+  created_at timestamp DEFAULT now(),
+  updated_at timestamp DEFAULT now()
+);
+
+ALTER TABLE post_payloads ENABLE ROW LEVEL SECURITY;
+```
+
+### 14. post_metrics (Snapshot básico por red)
+```sql
+CREATE TABLE post_metrics (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  post_id uuid REFERENCES post_payloads(id) ON DELETE CASCADE,
+  network text NOT NULL,
+  followers_count integer,
+  likes_count integer,
+  comments_count integer,
+  captured_at timestamp DEFAULT now()
+);
+
+ALTER TABLE post_metrics ENABLE ROW LEVEL SECURITY;
+```
+
 ---
 
 ## 🔄 RELACIONES ENTRE TABLAS
@@ -404,6 +456,7 @@ users (auth.users)
        ├── hashtag_presets (presets)
        ├── usage_counters (límites)
        └── oauth_states (OAuth)
+post_payloads (payload congelado)
 ```
 
 ---
