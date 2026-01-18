@@ -28,19 +28,19 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000"
 
-[[functions]]
+[[scheduled.functions]]
   name = "scheduler"
   schedule = "*/5 * * * *"
 
-[[functions]]
+[[scheduled.functions]]
   name = "metrics-sync"
   schedule = "0 * * * *"
 
-[[functions]]
+[[scheduled.functions]]
   name = "scheduled-ready"
   schedule = "*/5 * * * *"
 
-[[functions]]
+[[scheduled.functions]]
   name = "n8n-trigger"
   schedule = "*/5 * * * *"
 
