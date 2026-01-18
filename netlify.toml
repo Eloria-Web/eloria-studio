@@ -28,10 +28,120 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000"
 
-[[functions]]
+[[scheduled.functions]]
   name = "scheduler"
   schedule = "*/5 * * * *"
 
-[[functions]]
+[[scheduled.functions]]
   name = "metrics-sync"
   schedule = "0 * * * *"
+
+[[scheduled.functions]]
+  name = "scheduled-ready"
+  schedule = "*/5 * * * *"
+
+[[scheduled.functions]]
+  name = "n8n-trigger"
+  schedule = "*/5 * * * *"
+
+[[redirects]]
+  from = "/posts/draft"
+  to = "/.netlify/functions/posts-draft"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/posts/*"
+  to = "/.netlify/functions/posts-get"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/meta/oauth/start"
+  to = "/.netlify/functions/meta-oauth-start"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/meta/oauth/callback"
+  to = "/.netlify/functions/meta-oauth-callback"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/meta/connections"
+  to = "/.netlify/functions/meta-connections"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/meta/select"
+  to = "/.netlify/functions/meta-select"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/meta/publish"
+  to = "/.netlify/functions/meta-publish"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/tiktok/oauth/start"
+  to = "/.netlify/functions/tiktok-oauth-start"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/tiktok/oauth/callback"
+  to = "/.netlify/functions/tiktok-oauth-callback"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/youtube/oauth/start"
+  to = "/.netlify/functions/youtube-oauth-start"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/youtube/oauth/callback"
+  to = "/.netlify/functions/youtube-oauth-callback"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/tiktok/publish"
+  to = "/.netlify/functions/tiktok-publish"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/youtube/publish"
+  to = "/.netlify/functions/youtube-publish"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/posts/status/*"
+  to = "/.netlify/functions/posts-status"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/posts/metrics/*"
+  to = "/.netlify/functions/posts-metrics"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/brands"
+  to = "/.netlify/functions/brands"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/brand/usage"
+  to = "/.netlify/functions/brand-usage"
+  status = 200
+  force = true

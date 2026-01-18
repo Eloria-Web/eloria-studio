@@ -5,6 +5,7 @@ const editorState = {
   },
   selected_networks: [],
   adaptations: {},
+  post_id: null,
   formats: {
     instagram: { feed: true, stories: false },
     facebook: { feed: true, stories: false },
@@ -42,6 +43,24 @@ const reviewBtn = document.getElementById('reviewBtn');
 const validationSummary = document.getElementById('validationSummary');
 const validationSuccess = document.getElementById('validationSuccess');
 const finalizeBtn = document.getElementById('finalizeBtn');
+const globalPublishStatus = document.getElementById('globalPublishStatus');
+const networkPublishList = document.getElementById('networkPublishList');
+const metricsList = document.getElementById('metricsList');
+const brandSelect = document.getElementById('brandSelect');
+const brandNameInput = document.getElementById('brandNameInput');
+const createBrandBtn = document.getElementById('createBrandBtn');
+const activeBrandLabel = document.getElementById('activeBrandLabel');
+const brandLimitNote = document.getElementById('brandLimitNote');
+const planUsageNote = document.getElementById('planUsageNote');
+let activeBrandRole = 'viewer';
+let currentPlanLimits = null;
+const brandIdInput = document.getElementById('brandIdInput');
+const oauthMessage = document.getElementById('oauthMessage');
+const loadMetaBtn = document.getElementById('loadMetaBtn');
+const facebookAccountSelect = document.getElementById('facebookAccountSelect');
+const instagramAccountSelect = document.getElementById('instagramAccountSelect');
+const activateFacebookBtn = document.getElementById('activateFacebookBtn');
+const activateInstagramBtn = document.getElementById('activateInstagramBtn');
 
 function updateEmptyState() {
   if (!emptyState) {
@@ -193,6 +212,7 @@ function clearDraft() {
   editorState.post_master.text = '';
   revokeMediaUrls(editorState.post_master.media);
   editorState.post_master.media = [];
+  editorState.post_id = null;
   if (postText) {
     postText.value = '';
   }
@@ -206,6 +226,15 @@ function clearDraft() {
   setDraftStatus();
   setDraftMessage('Borrador limpio.');
   setTimeout(() => setDraftMessage(''), 3000);
+  if (validationSummary) {
+    validationSummary.textContent = '';
+  }
+  if (validationSuccess) {
+    validationSuccess.textContent = '';
+  }
+  const url = new URL(window.location.href);
+  url.searchParams.delete('draft_id');
+  window.history.replaceState({}, '', url.toString());
 }
 
 function bindEvents() {
@@ -235,10 +264,9 @@ function bindEvents() {
   }
 
   if (saveDraftBtn) {
-    saveDraftBtn.addEventListener('click', () => {
+    saveDraftBtn.addEventListener('click', async () => {
       setDraftStatus();
-      setDraftMessage('Guardado en Borradores');
-      setTimeout(() => setDraftMessage(''), 3000);
+      await saveDraftToBackend();
     });
   }
 
@@ -257,6 +285,43 @@ function bindEvents() {
   if (finalizeBtn) {
     finalizeBtn.addEventListener('click', () => {
       validateAndRender();
+    });
+  }
+
+  document.querySelectorAll('.connect-btn').forEach((button) => {
+    button.addEventListener('click', (event) => {
+      const network = event.currentTarget.dataset.network;
+      startNetworkOAuth(network);
+    });
+  });
+
+  if (loadMetaBtn) {
+    loadMetaBtn.addEventListener('click', () => {
+      loadMetaConnections();
+    });
+  }
+
+  if (activateFacebookBtn) {
+    activateFacebookBtn.addEventListener('click', () => {
+      activateMetaConnection('facebook', facebookAccountSelect?.value);
+    });
+  }
+
+  if (activateInstagramBtn) {
+    activateInstagramBtn.addEventListener('click', () => {
+      activateMetaConnection('instagram', instagramAccountSelect?.value);
+    });
+  }
+
+  if (createBrandBtn) {
+    createBrandBtn.addEventListener('click', () => {
+      createBrand();
+    });
+  }
+
+  if (brandSelect) {
+    brandSelect.addEventListener('change', () => {
+      setActiveBrand(brandSelect.value);
     });
   }
 
@@ -311,6 +376,9 @@ function bindEvents() {
 
 function initEditor() {
   window.editorState = editorState;
+  handleMetaOAuthResult();
+  loadBrands();
+  loadDraftFromQuery();
   updateEmptyState();
   updatePreviewText();
   updatePreviewMedia();
@@ -326,6 +394,662 @@ function initEditor() {
   updateSummaryDetails();
   validateAndRender();
   bindEvents();
+}
+
+function getLocalUserId() {
+  const storageKey = 'eloria_user_id';
+  let value = localStorage.getItem(storageKey);
+  if (!value) {
+    value = crypto?.randomUUID ? crypto.randomUUID() : `user_${Date.now()}`;
+    localStorage.setItem(storageKey, value);
+  }
+  return value;
+}
+
+async function loadBrands() {
+  if (!brandSelect) {
+    return;
+  }
+  const userId = getLocalUserId();
+  try {
+    const response = await fetch(`/brands?user_id=${userId}`);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'No se pudieron cargar marcas.');
+    }
+    currentPlanLimits = data.limits || null;
+    renderBrands(data.brands || []);
+  } catch (error) {
+    setOauthMessage(error.message || 'No se pudieron cargar marcas.');
+  }
+}
+
+function renderBrands(brands) {
+  if (!brandSelect) {
+    return;
+  }
+  brandSelect.innerHTML = '';
+  if (!Array.isArray(brands) || brands.length === 0) {
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = 'Sin marcas todavía';
+    brandSelect.appendChild(option);
+    setActiveBrand('');
+    return;
+  }
+
+  const stored = localStorage.getItem('active_brand_id');
+  brands.forEach((brand) => {
+    const option = document.createElement('option');
+    option.value = brand.id;
+    option.textContent = brand.name;
+    option.dataset.role = brand.role || 'viewer';
+    if (stored && stored === brand.id) {
+      option.selected = true;
+    }
+    brandSelect.appendChild(option);
+  });
+
+  const selectedId = brandSelect.value || brands[0].id;
+  setActiveBrand(selectedId);
+  updateBrandLimitNote(brands);
+}
+
+function updateBrandLimitNote(brands) {
+  if (!brandLimitNote) {
+    return;
+  }
+  const count = Array.isArray(brands) ? brands.length : 0;
+  const limit = currentPlanLimits?.brands || 1;
+  if (count <= limit) {
+    brandLimitNote.textContent = `Marcas usadas: ${count}/${limit}`;
+    return;
+  }
+  brandLimitNote.textContent = 'Has superado el límite de marcas.';
+}
+
+function setActiveBrand(brandId) {
+  if (brandIdInput) {
+    brandIdInput.value = brandId || '';
+  }
+  if (activeBrandLabel) {
+    activeBrandLabel.textContent = brandId ? `Marca activa: ${brandSelect?.selectedOptions?.[0]?.textContent}` : 'Sin marca seleccionada.';
+  }
+  const role = brandSelect?.selectedOptions?.[0]?.dataset?.role || 'viewer';
+  activeBrandRole = role;
+  applyRolePermissions(role);
+  if (brandId) {
+    localStorage.setItem('active_brand_id', brandId);
+    loadBrandUsage(brandId);
+  }
+}
+
+function applyRolePermissions(role) {
+  const readOnly = role === 'viewer';
+  const editableSelectors = [
+    '#postText',
+    '#mediaInput',
+    '#saveDraftBtn',
+    '#clearDraftBtn',
+    '#reviewBtn',
+    '#finalizeBtn',
+    '.connect-btn',
+    '.network-input',
+    '.format-input',
+    '.adaptations-list input',
+    '.adaptations-list textarea',
+    '#loadMetaBtn',
+    '#activateFacebookBtn',
+    '#activateInstagramBtn',
+    '#scheduleAt',
+    'input[name="publishMode"]'
+  ];
+  editableSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((el) => {
+      if (el instanceof HTMLButtonElement) {
+        el.style.display = readOnly ? 'none' : '';
+      } else {
+        el.disabled = readOnly;
+      }
+    });
+  });
+
+  if (createBrandBtn) {
+    createBrandBtn.style.display = role === 'viewer' ? 'none' : '';
+  }
+  if (brandNameInput) {
+    brandNameInput.disabled = role === 'viewer';
+  }
+}
+
+async function createBrand() {
+  const name = brandNameInput?.value?.trim();
+  if (!name) {
+    setOauthMessage('Ingresa un nombre de marca.');
+    return;
+  }
+  const userId = getLocalUserId();
+  try {
+    const response = await fetch('/brands', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, user_id: userId })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'No se pudo crear la marca.');
+    }
+    brandNameInput.value = '';
+    setOauthMessage('Marca creada.');
+    await loadBrands();
+  } catch (error) {
+    setOauthMessage(error.message || 'No se pudo crear la marca.');
+  }
+}
+
+async function loadBrandUsage(brandId) {
+  const userId = getLocalUserId();
+  try {
+    const response = await fetch(`/brand/usage?brand_id=${brandId}&user_id=${userId}`);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'No se pudo cargar límites.');
+    }
+    applyPlanLimits(data);
+  } catch (error) {
+    setOauthMessage(error.message || 'No se pudo cargar límites.');
+  }
+}
+
+function applyPlanLimits(data) {
+  if (!data || !data.limits) {
+    return;
+  }
+  const { limits, usage } = data;
+  if (planUsageNote) {
+    planUsageNote.textContent = `Redes activas: ${usage.active_networks}/${limits.networks} · Publicaciones mes: ${usage.monthly_posts}/${limits.monthly_posts}`;
+  }
+
+  const atNetworkLimit = usage.active_networks >= limits.networks;
+  document.querySelectorAll('.connect-btn').forEach((btn) => {
+    if (btn instanceof HTMLButtonElement) {
+      btn.disabled = atNetworkLimit;
+    }
+  });
+
+  if (finalizeBtn instanceof HTMLButtonElement) {
+    finalizeBtn.disabled = usage.monthly_posts >= limits.monthly_posts;
+  }
+}
+
+function startNetworkOAuth(network) {
+  if (!network) {
+    return;
+  }
+  if (network === 'facebook' || network === 'instagram') {
+    startMetaOAuth();
+    return;
+  }
+  if (network === 'tiktok') {
+    startTikTokOAuth();
+    return;
+  }
+  if (network === 'youtube') {
+    startYouTubeOAuth();
+    return;
+  }
+  setOauthMessage('Esta red no está disponible para conexión.');
+}
+
+function startMetaOAuth() {
+  const brandId = brandIdInput?.value?.trim();
+  if (!brandId) {
+    setOauthMessage('Ingresa el Brand ID para conectar la red.');
+    return;
+  }
+  const userId = getLocalUserId();
+  const params = new URLSearchParams({
+    brand_id: brandId,
+    user_id: userId,
+    redirect: '/editor.html'
+  });
+  window.location.href = `/meta/oauth/start?${params.toString()}`;
+}
+
+function startTikTokOAuth() {
+  const brandId = brandIdInput?.value?.trim();
+  if (!brandId) {
+    setOauthMessage('Ingresa el Brand ID para conectar la red.');
+    return;
+  }
+  const userId = getLocalUserId();
+  const params = new URLSearchParams({
+    brand_id: brandId,
+    user_id: userId,
+    redirect: '/editor.html'
+  });
+  window.location.href = `/tiktok/oauth/start?${params.toString()}`;
+}
+
+function startYouTubeOAuth() {
+  const brandId = brandIdInput?.value?.trim();
+  if (!brandId) {
+    setOauthMessage('Ingresa el Brand ID para conectar la red.');
+    return;
+  }
+  const userId = getLocalUserId();
+  const params = new URLSearchParams({
+    brand_id: brandId,
+    user_id: userId,
+    redirect: '/editor.html'
+  });
+  window.location.href = `/youtube/oauth/start?${params.toString()}`;
+}
+
+function handleMetaOAuthResult() {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('oauth');
+  if (!status) {
+    return;
+  }
+  const network = params.get('oauth_network');
+  if (status === 'success') {
+    setOauthMessage('Conexión completada. Puedes continuar.');
+    if (!network || network === 'facebook' || network === 'instagram') {
+      loadMetaConnections();
+    }
+    if (network === 'tiktok' || network === 'youtube') {
+      updateNetworkStatus(network, true);
+    }
+    if (brandIdInput?.value) {
+      loadBrandUsage(brandIdInput.value);
+    }
+  } else if (status === 'limit') {
+    setOauthMessage('Límite de redes activas alcanzado. Actualiza tu plan.');
+    if (network) {
+      updateNetworkStatus(network, false);
+    }
+  } else {
+    setOauthMessage('No se pudo completar la conexión. Intenta de nuevo.');
+    if (network) {
+      updateNetworkStatus(network, false);
+    }
+  }
+}
+
+function setOauthMessage(text) {
+  if (!oauthMessage) {
+    return;
+  }
+  oauthMessage.textContent = text;
+}
+
+async function loadMetaConnections() {
+  const brandId = brandIdInput?.value?.trim();
+  if (!brandId) {
+    setOauthMessage('Ingresa el Brand ID para cargar cuentas.');
+    return;
+  }
+  const userId = getLocalUserId();
+  try {
+    const response = await fetch(`/meta/connections?brand_id=${brandId}&user_id=${userId}`);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'No se pudieron cargar las cuentas.');
+    }
+    populateMetaSelects(data.connections || []);
+  } catch (error) {
+    setOauthMessage(error.message || 'No se pudieron cargar las cuentas.');
+  }
+}
+
+function populateMetaSelects(connections) {
+  if (facebookAccountSelect) {
+    facebookAccountSelect.innerHTML = '<option value="">Selecciona una página</option>';
+  }
+  if (instagramAccountSelect) {
+    instagramAccountSelect.innerHTML = '<option value="">Selecciona una cuenta</option>';
+  }
+
+  const facebookConnections = connections.filter((item) => item.network === 'facebook');
+  const instagramConnections = connections.filter((item) => item.network === 'instagram');
+
+  facebookConnections.forEach((conn) => {
+    const option = document.createElement('option');
+    option.value = conn.account_id;
+    option.textContent = conn.account_name || conn.account_id;
+    if (conn.is_active) {
+      option.selected = true;
+      updateNetworkStatus('facebook', true);
+    }
+    facebookAccountSelect?.appendChild(option);
+  });
+
+  instagramConnections.forEach((conn) => {
+    const option = document.createElement('option');
+    option.value = conn.account_id;
+    option.textContent = conn.account_name || conn.account_id;
+    if (conn.is_active) {
+      option.selected = true;
+      updateNetworkStatus('instagram', true);
+    }
+    instagramAccountSelect?.appendChild(option);
+  });
+}
+
+async function activateMetaConnection(network, accountId) {
+  const brandId = brandIdInput?.value?.trim();
+  if (!brandId || !network || !accountId) {
+    setOauthMessage('Selecciona una cuenta antes de activar.');
+    return;
+  }
+  const userId = getLocalUserId();
+  try {
+    const response = await fetch('/meta/select', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        brand_id: brandId,
+        network,
+        account_id: accountId,
+        user_id: userId
+      })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'No se pudo activar la cuenta.');
+    }
+    setOauthMessage('Cuenta activada.');
+    updateNetworkStatus(network, true);
+  } catch (error) {
+    setOauthMessage(error.message || 'No se pudo activar la cuenta.');
+  }
+}
+
+function updateNetworkStatus(network, isConnected) {
+  const option = document.querySelector(`.network-option[data-network="${network}"] .network-status`);
+  if (option) {
+    option.textContent = isConnected ? 'Conectada' : 'No conectada';
+  }
+}
+
+async function saveDraftToBackend() {
+  const payloadFinal = buildPayloadFinal();
+  const userId = getLocalUserId();
+  try {
+    const response = await fetch('/posts/draft', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        payload_final: payloadFinal,
+        brand_id: brandIdInput?.value?.trim() || null,
+        user_id: userId
+      })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'No se pudo guardar el borrador.');
+    }
+    if (data.id) {
+      editorState.post_id = data.id;
+      const url = new URL(window.location.href);
+      url.searchParams.set('draft_id', data.id);
+      window.history.replaceState({}, '', url.toString());
+    }
+    setDraftMessage('Guardado en Borradores');
+    setTimeout(() => setDraftMessage(''), 3000);
+  } catch (error) {
+    setDraftMessage(error.message || 'No se pudo guardar el borrador.');
+  }
+}
+
+async function loadDraftFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const draftId = params.get('draft_id');
+  if (!draftId) {
+    return;
+  }
+  try {
+    const response = await fetch(`/posts/${draftId}`);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'No se pudo cargar el borrador.');
+    }
+    editorState.post_id = data.id || draftId;
+    rehydrateEditor(data.payload_final);
+    loadPublishStatus(editorState.post_id);
+    loadMetrics(editorState.post_id);
+  } catch (error) {
+    setDraftMessage(error.message || 'No se pudo cargar el borrador.');
+  }
+}
+
+async function loadPublishStatus(postId) {
+  if (!postId) {
+    return;
+  }
+  const userId = getLocalUserId();
+  try {
+    const response = await fetch(`/posts/status/${postId}?user_id=${userId}`);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'No se pudo cargar el estado.');
+    }
+    renderPublishStatus(data.publish_results || []);
+  } catch (error) {
+    renderPublishStatus([]);
+  }
+}
+
+function renderPublishStatus(results) {
+  if (!globalPublishStatus || !networkPublishList) {
+    return;
+  }
+
+  const networks = editorState.selected_networks || [];
+  if (networks.length === 0) {
+    setGlobalPublishStatus('pending', 'Pendiente');
+    networkPublishList.innerHTML = '';
+    return;
+  }
+
+  const perNetwork = networks.map((network) => {
+    const entries = results.filter((item) => item.network === network);
+    if (entries.length === 0) {
+      return { network, status: 'pending', error: '' };
+    }
+    const failed = entries.find((item) => item.status === 'failed');
+    if (failed) {
+      return { network, status: 'failed', error: failed.error_message || '' };
+    }
+    return { network, status: 'success', error: '' };
+  });
+
+  const successCount = perNetwork.filter((item) => item.status === 'success').length;
+  const failedCount = perNetwork.filter((item) => item.status === 'failed').length;
+  const total = perNetwork.length;
+
+  if (successCount === total) {
+    setGlobalPublishStatus('success', 'Publicado');
+  } else if (failedCount === total) {
+    setGlobalPublishStatus('failed', 'Fallido');
+  } else {
+    setGlobalPublishStatus('partial', 'Parcial');
+  }
+
+  networkPublishList.innerHTML = '';
+  perNetwork.forEach((item) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'status-item';
+
+    const row = document.createElement('div');
+    row.className = 'status-row';
+    row.innerHTML = `<span>${labelForNetwork(item.network)}</span>`;
+
+    const badge = document.createElement('span');
+    badge.className = `status-badge ${statusClassFor(item.status)}`;
+    badge.textContent = statusLabelFor(item.status);
+    row.appendChild(badge);
+
+    wrapper.appendChild(row);
+
+    if (item.status === 'failed' && item.error) {
+      const errorText = document.createElement('div');
+      errorText.className = 'status-error';
+      errorText.textContent = item.error;
+      wrapper.appendChild(errorText);
+    }
+
+    networkPublishList.appendChild(wrapper);
+  });
+}
+
+function setGlobalPublishStatus(status, text) {
+  globalPublishStatus.className = `status-badge ${statusClassFor(status)}`;
+  globalPublishStatus.textContent = text;
+}
+
+function statusClassFor(status) {
+  if (status === 'success') {
+    return 'is-success';
+  }
+  if (status === 'failed') {
+    return 'is-failed';
+  }
+  if (status === 'partial') {
+    return 'is-partial';
+  }
+  return 'is-pending';
+}
+
+function statusLabelFor(status) {
+  if (status === 'success') {
+    return 'Éxito';
+  }
+  if (status === 'failed') {
+    return 'Fallido';
+  }
+  return 'Pendiente';
+}
+
+async function loadMetrics(postId) {
+  if (!postId || !metricsList) {
+    return;
+  }
+  const userId = getLocalUserId();
+  try {
+    const response = await fetch(`/posts/metrics/${postId}?user_id=${userId}`);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'No se pudieron cargar métricas.');
+    }
+    renderMetrics(data.metrics || []);
+  } catch (error) {
+    renderMetrics([]);
+  }
+}
+
+function renderMetrics(metrics) {
+  if (!metricsList) {
+    return;
+  }
+  if (!Array.isArray(metrics) || metrics.length === 0) {
+    metricsList.innerHTML = '<p class="helper-text">Sin métricas todavía.</p>';
+    return;
+  }
+  metricsList.innerHTML = '';
+  metrics.forEach((item) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'metrics-item';
+
+    const title = document.createElement('div');
+    title.textContent = labelForNetwork(item.network);
+    wrapper.appendChild(title);
+
+    const followers = document.createElement('div');
+    followers.className = 'metrics-row';
+    followers.innerHTML = `<span class="metrics-label">Seguidores</span><span>${item.followers_count ?? '—'}</span>`;
+    wrapper.appendChild(followers);
+
+    const likes = document.createElement('div');
+    likes.className = 'metrics-row';
+    likes.innerHTML = `<span class="metrics-label">Likes</span><span>${item.likes_count ?? '—'}</span>`;
+    wrapper.appendChild(likes);
+
+    const comments = document.createElement('div');
+    comments.className = 'metrics-row';
+    comments.innerHTML = `<span class="metrics-label">Comentarios</span><span>${item.comments_count ?? '—'}</span>`;
+    wrapper.appendChild(comments);
+
+    metricsList.appendChild(wrapper);
+  });
+}
+
+function buildPayloadFinal() {
+  return {
+    post_id: editorState.post_id || null,
+    status: editorState.status,
+    publish_mode: editorState.publish_mode,
+    scheduled_at_utc: editorState.scheduled_at,
+    post_master: {
+      text: editorState.post_master.text,
+      media: editorState.post_master.media
+    },
+    selected_networks: editorState.selected_networks,
+    formats: editorState.formats,
+    adaptations: editorState.adaptations,
+    validation: editorState.validation || { global: [], per_network: {} },
+    metadata: {
+      created_at_utc: null,
+      updated_at_utc: null,
+      editor_version: 'day7',
+      source: 'editor'
+    }
+  };
+}
+
+function rehydrateEditor(payload) {
+  if (!payload) {
+    return;
+  }
+  editorState.post_master = payload.post_master || { text: '', media: [] };
+  editorState.selected_networks = payload.selected_networks || [];
+  editorState.formats = payload.formats || editorState.formats;
+  editorState.adaptations = payload.adaptations || {};
+  editorState.publish_mode = payload.publish_mode || 'now';
+  editorState.scheduled_at = payload.scheduled_at_utc || null;
+  editorState.status = payload.status || 'draft';
+  editorState.validation = payload.validation || { global: [], per_network: {} };
+
+  if (postText) {
+    postText.value = editorState.post_master.text || '';
+  }
+  if (mediaInput) {
+    mediaInput.value = '';
+  }
+  updatePreviewText();
+  updatePreviewMedia();
+  updateEmptyState();
+
+  document.querySelectorAll('.network-input').forEach((checkbox) => {
+    checkbox.checked = editorState.selected_networks.includes(checkbox.value);
+  });
+  syncFormatInputs();
+  updateNetworkStyles();
+  updateNetworkWarning();
+  updateAdaptationsVisibility();
+  renderAdaptations();
+  updateSummary();
+  updateSummaryDetails();
+  updateStatus();
+
+  if (editorState.publish_mode === 'scheduled' && schedulePicker) {
+    schedulePicker.classList.add('is-visible');
+    if (scheduleAt && editorState.scheduled_at) {
+      const localValue = new Date(editorState.scheduled_at);
+      scheduleAt.value = localValue.toISOString().slice(0, 16);
+    }
+  }
 }
 
 function ensureDefaultFormats(network) {
